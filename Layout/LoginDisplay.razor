@@ -1,0 +1,28 @@
+﻿@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using Microsoft.AspNetCore.Components.Authorization
+@inject NavigationManager Navigation
+@inject AuthenticationStateProvider AuthProvider
+
+<AuthorizeView>
+    <Authorized>
+        Hello, @context.User.Identity?.Name!
+        <button class="nav-link btn btn-link" @onclick="LogOut">Log out</button>
+    </Authorized>
+    <NotAuthorized>
+        <button class="nav-link btn btn-link" @onclick="LogIn">Log in</button>
+    </NotAuthorized>
+</AuthorizeView>
+
+@code{
+    private void LogIn()
+    {
+        Navigation.NavigateTo("/login");
+    }
+    private void LogOut()
+    {
+        if (AuthProvider is StudentServiceApp.MockAuthenticationStateProvider mock)
+        {
+            mock.SignOut();
+        }
+    }
+}

@@ -1,0 +1,60 @@
+﻿@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.JSInterop
+@inject AuthenticationStateProvider AuthProvider
+@inject NavigationManager Navigation
+@inject IJSRuntime JSRuntime
+
+<div class="top-row ps-3 navbar navbar-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="">
+            <img src="school-logo.svg" alt="School Logo" style="height:32px;" />
+            StudentServiceApp
+        </a>
+        <button title="Toggle dark mode" class="btn btn-outline-light ms-2" @onclick="ToggleDarkMode" style="border-radius:20px;padding:2px 10px;font-size:0.95rem;height:32px;line-height:1.2;">
+            <span class="bi bi-moon"></span> <span class="d-none d-md-inline">Dark Mode</span>
+        </button>
+        <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+    </div>
+</div>
+
+<div class="@NavMenuCssClass nav-scrollable" @onclick="ToggleNavMenu">
+    <nav class="nav flex-column">
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
+            </NavLink>
+        </div>
+        <div class="nav-item px-3">
+            <a class="nav-link" href="#" @onclick="GoToStudents">
+                <span class="bi bi-people-fill-nav-menu" aria-hidden="true"></span> Students
+            </a>
+        </div>
+    </nav>
+</div>
+
+@code {
+    private bool collapseNavMenu = true;
+    private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+    private void ToggleNavMenu()
+    {
+        collapseNavMenu = !collapseNavMenu;
+    }
+    private async Task GoToStudents()
+    {
+        var authState = await AuthProvider.GetAuthenticationStateAsync();
+        if (authState.User.Identity?.IsAuthenticated == true)
+        {
+            Navigation.NavigateTo("/students");
+        }
+        else
+        {
+            Navigation.NavigateTo("/login");
+        }
+    }
+    private async void ToggleDarkMode()
+    {
+        await JSRuntime.InvokeVoidAsync("toggleDarkMode");
+    }
+}

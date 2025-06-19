@@ -1,0 +1,41 @@
+@page "/students/delete/{Id:int}"
+@using StudentServiceApp.Models
+@inject StudentServiceApp.Services.StudentService StudentService
+@inject NavigationManager Navigation
+
+<h3>Delete Student</h3>
+
+@if (student == null)
+{
+    <p>Student not found.</p>
+    <button class="btn btn-secondary" @onclick="GoBack">Back to List</button>
+}
+else
+{
+    <div class="alert alert-danger">
+        <p>Are you sure you want to delete <strong>@student.FirstName @student.LastName</strong>?</p>
+        <button class="btn btn-danger" @onclick="ConfirmDelete">Delete</button>
+        <button class="btn btn-secondary" @onclick="GoBack">Cancel</button>
+    </div>
+}
+
+@code {
+    [Parameter] public int Id { get; set; }
+    private Student? student;
+
+    protected override void OnInitialized()
+    {
+        student = StudentService.GetById(Id);
+    }
+
+    private async Task ConfirmDelete()
+    {
+        if (student != null)
+        {
+            await StudentService.DeleteAsync(student.Id);
+            Navigation.NavigateTo("/students");
+        }
+    }
+
+    private void GoBack() => Navigation.NavigateTo("/students");
+}

@@ -1,0 +1,65 @@
+@page "/students/edit/{Id:int}"
+@using StudentServiceApp.Models
+@inject StudentServiceApp.Services.StudentService StudentService
+@inject NavigationManager Navigation
+
+<h3>Edit Student</h3>
+
+@if (student == null)
+{
+    <p>Student not found.</p>
+    <button class="btn btn-secondary" @onclick="GoBack">Back to List</button>
+}
+else
+{
+    <div class="row">
+        <div class="col-md-3">
+            <input @bind="student.FirstName" class="form-control" placeholder="First Name" />
+        </div>
+        <div class="col-md-3">
+            <input @bind="student.LastName" class="form-control" placeholder="Last Name" />
+        </div>
+        <div class="col-md-3">
+            <input @bind="student.Email" class="form-control" placeholder="Email" />
+        </div>
+        <div class="col-md-2">
+            <input @bind="student.Major" class="form-control" placeholder="Major" />
+        </div>
+        <div class="col-md-1">
+            <button class="btn btn-success" @onclick="SaveEdit">Save</button>
+        </div>
+    </div>
+    <button class="btn btn-secondary mt-2" @onclick="GoBack">Back to List</button>
+}
+
+@code {
+    [Parameter] public int Id { get; set; }
+    private Student? student;
+
+    protected override void OnInitialized()
+    {
+        var s = StudentService.GetById(Id);
+        if (s != null)
+        {
+            student = new Student
+            {
+                Id = s.Id,
+                FirstName = s.FirstName,
+                LastName = s.LastName,
+                Email = s.Email,
+                Major = s.Major
+            };
+        }
+    }
+
+    private async Task SaveEdit()
+    {
+        if (student != null)
+        {
+            await StudentService.UpdateAsync(student);
+            Navigation.NavigateTo("/students");
+        }
+    }
+
+    private void GoBack() => Navigation.NavigateTo("/students");
+}

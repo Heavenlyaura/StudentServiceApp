@@ -1,0 +1,38 @@
+@page "/login"
+@using Microsoft.AspNetCore.Components.Authorization
+@inject AuthenticationStateProvider AuthProvider
+@inject NavigationManager Navigation
+
+<h3>Login</h3>
+
+<div class="card" style="max-width:400px;margin:2rem auto;padding:2rem;box-shadow:0 2px 12px #00336622;">
+    <div class="mb-3">
+        <label for="username" class="form-label">Username</label>
+        <input id="username" class="form-control" @bind="username" placeholder="Enter your username" />
+    </div>
+    <button class="btn btn-primary w-100" @onclick="HandleLogin">Log In</button>
+</div>
+
+@if (errorMessage != null)
+{
+    <div class="alert alert-danger" style="max-width:400px;margin:1rem auto;">@errorMessage</div>
+}
+
+@code {
+    private string username = string.Empty;
+    private string? errorMessage;
+
+    private void HandleLogin()
+    {
+        if (string.IsNullOrWhiteSpace(username))
+        {
+            errorMessage = "Username is required.";
+            return;
+        }
+        if (AuthProvider is StudentServiceApp.MockAuthenticationStateProvider mock)
+        {
+            mock.SignIn(username);
+            Navigation.NavigateTo("/");
+        }
+    }
+}

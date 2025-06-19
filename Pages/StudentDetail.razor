@@ -1,0 +1,34 @@
+@page "/students/details/{Id:int}"
+@using StudentServiceApp.Models
+@inject StudentServiceApp.Services.StudentService StudentService
+@inject NavigationManager Navigation
+
+<h3>Student Details</h3>
+
+@if (student == null)
+{
+    <div class="alert alert-warning">Student not found.</div>
+    <button class="btn btn-secondary" @onclick="GoBack">Back to List</button>
+}
+else
+{
+    <div class="card" style="max-width:400px;margin:2rem auto;padding:2rem;box-shadow:0 2px 12px #00336622;">
+        <h4>@student.FirstName @student.LastName</h4>
+        <p><strong>Email:</strong> @student.Email</p>
+        <p><strong>Major:</strong> @student.Major</p>
+        <!-- Placeholder for future fields like photo, address, etc. -->
+        <button class="btn btn-secondary w-100 mt-2" @onclick="GoBack">Back to List</button>
+    </div>
+}
+
+@code {
+    [Parameter] public int Id { get; set; }
+    private Student? student;
+
+    protected override void OnInitialized()
+    {
+        student = StudentService.GetById(Id);
+    }
+
+    private void GoBack() => Navigation.NavigateTo("/students");
+}

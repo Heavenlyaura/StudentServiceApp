@@ -1,0 +1,42 @@
+@page "/students/create"
+@using StudentServiceApp.Models
+@inject StudentServiceApp.Services.StudentService StudentService
+@inject NavigationManager Navigation
+
+<h3>Add New Student</h3>
+
+<div class="card" style="max-width:400px;margin:2rem auto;padding:2rem;box-shadow:0 2px 12px #00336622;">
+    <div class="mb-3">
+        <label for="firstName" class="form-label">First Name</label>
+        <input id="firstName" @bind="student.FirstName" class="form-control" placeholder="First Name" />
+    </div>
+    <div class="mb-3">
+        <label for="lastName" class="form-label">Last Name</label>
+        <input id="lastName" @bind="student.LastName" class="form-control" placeholder="Last Name" />
+    </div>
+    <div class="mb-3">
+        <label for="email" class="form-label">Email</label>
+        <input id="email" @bind="student.Email" class="form-control" placeholder="Email" />
+    </div>
+    <div class="mb-3">
+        <label for="major" class="form-label">Major</label>
+        <input id="major" @bind="student.Major" class="form-control" placeholder="Major" />
+    </div>
+    <button class="btn btn-success w-100" @onclick="AddStudent">Add</button>
+    <button class="btn btn-secondary w-100 mt-2" @onclick="GoBack">Back to List</button>
+</div>
+
+@code {
+    private Student student = new();
+
+    private async Task AddStudent()
+    {
+        if (!string.IsNullOrWhiteSpace(student.FirstName) && !string.IsNullOrWhiteSpace(student.LastName))
+        {
+            await StudentService.AddAsync(student);
+            Navigation.NavigateTo("/students");
+        }
+    }
+
+    private void GoBack() => Navigation.NavigateTo("/students");
+}

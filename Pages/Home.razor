@@ -1,0 +1,97 @@
+﻿@page "/"
+@using System.Collections.Generic
+
+<div class="card" style="max-width:900px;margin:2rem auto;">
+    <ul class="nav nav-tabs">
+        <li class="nav-item">
+            <a class="nav-link @(activeTab=="overview" ? "active" : "")" href="#" @onclick="@(() => SetTab("overview"))">Overview</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link @(activeTab=="library" ? "active" : "")" href="#" @onclick="@(() => SetTab("library"))">Library</a>
+        </li>
+    </ul>
+    <div class="card-body">
+        @if (activeTab == "overview")
+        {
+            <div style="text-align:center;">
+                <img src="/icon-192.png" alt="School Banner" style="width:60%;max-width:320px;display:block;margin:2rem auto 1rem auto;border-radius:12px;box-shadow:0 2px 12px #00336633;" />
+            </div>
+            <h1 class="accent" style="text-align:center;">Welcome to StudentServiceApp!</h1>
+            <p style="text-align:center;max-width:600px;margin:0 auto 2rem auto;">
+                <strong>StudentServiceApp</strong> is your all-in-one platform for managing student information and services at our school.
+            </p>
+            <div class="row" style="max-width:700px;margin:0 auto 2rem auto;">
+                <div class="col-md-6 mb-3">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body">
+                            <img src="/icon-192.png" alt="Students" style="width:48px;height:48px;float:left;margin-right:1rem;" />
+                            <h5 class="card-title">Manage Students</h5>
+                            <p class="card-text">View, add, edit, and delete student records easily.</p>
+                            <a href="/students" class="btn btn-primary btn-sm">Go to Students</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body">
+                            <img src="/school-logo.svg" alt="Secure" style="width:48px;height:48px;float:left;margin-right:1rem;" />
+                            <h5 class="card-title">Secure Access</h5>
+                            <p class="card-text">Only authorized users can manage student data.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card" style="max-width:700px;margin:2rem auto;padding:2rem;box-shadow:0 2px 12px #00336622;">
+                <h4>Why use StudentServiceApp?</h4>
+                <ul>
+                    <li>Centralized student management for staff and administrators</li>
+                    <li>Easy search and filter to quickly find students</li>
+                    <li>Modern, responsive design with light/dark mode</li>
+                    <li>Role-based access and secure data handling</li>
+                    <li>Expandable for future features (photos, import/export, notifications, and more)</li>
+                </ul>
+                <h4>How to use:</h4>
+                <ol>
+                    <li>Log in using the login button at the top right</li>
+                    <li>Navigate to the Students page to view or manage records</li>
+                    <li>Use the search bar to filter students by name, email, or major</li>
+                    <li>Click “Add New Student” to register a new student</li>
+                    <li>Click “View” for details, or “Edit”/“Delete” for management</li>
+                    <li>Toggle dark mode for a comfortable viewing experience</li>
+                </ol>
+                <p>For help or feedback, contact the system administrator.</p>
+            </div>
+        }
+        else if (activeTab == "library")
+        {
+            <h3 class="accent">Library</h3>
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
+                @foreach (var book in books)
+                {
+                    <div class="col">
+                        <div class="card h-100 shadow-sm">
+                            <img src="@book.Cover" class="card-img-top" alt="@book.Title" style="height:180px;object-fit:cover;" />
+                            <div class="card-body">
+                                <h5 class="card-title">@book.Title</h5>
+                                <p class="card-text">by @book.Author</p>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    private string activeTab = "overview";
+    private List<(string Title, string Author, string Cover)> books = new()
+    {
+        ("C# in Depth", "Jon Skeet", "https://covers.openlibrary.org/b/id/8231996-L.jpg"),
+        ("Blazor Revealed", "Peter Himschoot", "https://covers.openlibrary.org/b/id/10523338-L.jpg"),
+        ("Clean Code", "Robert C. Martin", "https://covers.openlibrary.org/b/id/9641981-L.jpg"),
+        ("The Pragmatic Programmer", "Andrew Hunt & David Thomas", "https://covers.openlibrary.org/b/id/9251991-L.jpg"),
+        ("Design Patterns", "Erich Gamma et al.", "https://covers.openlibrary.org/b/id/8235116-L.jpg")
+    };
+    private void SetTab(string tab) => activeTab = tab;
+}

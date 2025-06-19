@@ -1,0 +1,77 @@
+@page "/students"
+@using StudentServiceApp.Models
+@using Microsoft.AspNetCore.Components.Authorization
+@inject StudentServiceApp.Services.StudentService StudentService
+@inject NavigationManager Navigation
+
+<AuthorizeView>
+    <Authorized>
+        <h3>Students</h3>
+        <div class="mb-3" style="max-width:400px;">
+            <input class="form-control" @bind="searchTerm" @bind:event="oninput" placeholder="Search by name, email, or major..." />
+        </div>
+        <button class="btn btn-success mb-2" @onclick="GoToCreate">Add New Student</button>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Email</th>
+                    <th>Major</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (FilteredStudents.Count == 0)
+                {
+                    <tr>
+                        <td colspan="5" style="text-align:center; color:#888;">No students available.</td>
+                    </tr>
+                }
+                else
+                {
+                    @foreach (var student in FilteredStudents)
+                    {
+                        <tr>
+                            <td data-label="First Name">@student.FirstName</td>
+                            <td data-label="Last Name">@student.LastName</td>
+                            <td data-label="Email">@student.Email</td>
+                            <td data-label="Major">@student.Major</td>
+                            <td data-label="Actions">
+                                <button class="btn btn-info btn-sm me-1" @onclick="() => GoToDetail(student.Id)">View</button>
+                                <button class="btn btn-primary btn-sm me-1" @onclick="() => GoToEdit(student.Id)">Edit</button>
+                                <button class="btn btn-danger btn-sm" @onclick="() => GoToDelete(student.Id)">Delete</button>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </Authorized>
+    <NotAuthorized>
+        <div class="alert alert-warning mt-4" style="text-align:center;">You must be logged in to view students. <a href="/login">Go to Login</a></div>
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+    private List<Student> students = new();
+    private string searchTerm = string.Empty;
+    private List<Student> FilteredStudents => string.IsNullOrWhiteSpace(searchTerm)
+        ? students
+        : students.Where(s =>
+            (s.FirstName + " " + s.LastName).Contains(searchTerm, StringComparison.OrdinalIgnoreCase)
+            || s.Email.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)
+            || s.Major.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)
+        ).ToList();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await StudentService.InitializeAsync();
+        students = StudentService.GetAll();
+    }
+
+    private void GoToCreate() => Navigation.NavigateTo("/students/create");
+    private void GoToEdit(int id) => Navigation.NavigateTo($"/students/edit/{id}");
+    private void GoToDelete(int id) => Navigation.NavigateTo($"/students/delete/{id}");
+    private void GoToDetail(int id) => Navigation.NavigateTo($"/students/details/{id}");
+}
